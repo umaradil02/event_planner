@@ -4,23 +4,44 @@ import { useSelector } from "react-redux";
 
 const Logincheker = () => {
   const { loading, logdinuser } = useSelector((state) => state.auth);
-  return loading ? (
-    <CircularProgress />
-  ) : !logdinuser ? (
-    <Outlet />
-  ) : (
-    <Navigate to="/dashboard" />
-  );
+
+  if (loading) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
+        <CircularProgress />
+      </div>
+    );
+  }
+
+  return logdinuser ? <Navigate to="/dashboard" /> : <Outlet />;
 };
+
 const Routeprotected = () => {
   const { loading, logdinuser } = useSelector((state) => state.auth);
-  // const { loginuser, loadinguser } = useContext(Authcontext);
-  return loading ? (
-    <CircularProgress />
-  ) : logdinuser ? (
-    <Outlet />
-  ) : (
-    <Navigate to="/loginform" />
-  );
+
+  if (loading) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
+        <CircularProgress />
+      </div>
+    );
+  }
+
+  return logdinuser ? <Outlet /> : <Navigate to="/" />;
 };
+
 export { Logincheker, Routeprotected };

@@ -14,13 +14,13 @@ export const router = createBrowserRouter(
   createRoutesFromElements(
     <>
       <Route element={<Layout />}>
+        <Route element={<Routeprotected />}>
+          <Route path="/dashboard" element={<DashBoard />} />
+        </Route>
         <Route element={<Logincheker />}>
+          <Route path="/" element={<WelcomePage />} />
           <Route path="/loginform" element={<LoginForm />} />
           <Route path="/signupform" element={<SignupForm />} />
-        </Route>
-        <Route element={<Routeprotected />}>
-          <Route path="/" element={<WelcomePage />} />
-          <Route path="/dashboard" element={<DashBoard />} />
         </Route>
       </Route>
     </>
