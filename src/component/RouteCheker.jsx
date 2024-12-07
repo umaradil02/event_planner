@@ -50,6 +50,9 @@ const Routeprotected = () => {
     if (!userAdmin && location.pathname === "/admin") {
       return <Navigate to="/dashboard" />;
     }
+    if (userAdmin && location.pathname === "/all-bookings") {
+      return <Navigate to="/all-bookings" />;
+    }
     return <Outlet />;
   }
   return <Navigate to="/" />;

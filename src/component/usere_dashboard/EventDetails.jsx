@@ -21,8 +21,14 @@ import {
   Button,
   Paper,
   CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  TextField,
 } from "@mui/material";
-import { CalendarToday, LocationOn, AttachMoney } from "@mui/icons-material";
+import { CalendarToday, LocationOn } from "@mui/icons-material";
+import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
 import { format } from "date-fns";
 
 function EventDetails() {
@@ -33,6 +39,8 @@ function EventDetails() {
   const { logdinuser } = useSelector((state) => state.auth);
   const [event, setEvent] = useState(eventFromStore);
   const [loading, setLoading] = useState(!eventFromStore);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [enteredAmount, setEnteredAmount] = useState("");
 
   useEffect(() => {
     const fetchEvent = async () => {
@@ -80,6 +88,16 @@ function EventDetails() {
     );
   }
 
+  const handlePayment = () => {
+    if (Number(enteredAmount) === Number(event.price)) {
+      handleBooking();
+      setIsModalOpen(false);
+      toast.success("Payment successful! Booking confirmed.");
+    } else {
+      toast.error("Entered amount does not match the event price.");
+    }
+  };
+
   const handleBooking = async () => {
     try {
       const bookingRef = collection(db, "bookings");
@@ -95,14 +113,17 @@ function EventDetails() {
         toast.error("You have already booked this event!");
         return;
       }
+
       await addDoc(bookingRef, {
         eventId: event.id,
         userId: logdinuser.uid,
+        UserName: logdinuser?.name,
         eventTitle: event.title,
         bookingDate: new Date().toISOString(),
+        eventDate: event.date,
+        eventImage: event.image,
         status: "confirmed",
       });
-      toast.success("Event booked successfully!");
     } catch (error) {
       toast.error("Failed to book event");
       console.error("Booking error:", error);
@@ -143,9 +164,9 @@ function EventDetails() {
                   </Typography>
                 </Box>
                 <Box display="flex" alignItems="center">
-                  <AttachMoney fontSize="small" sx={{ mr: 1 }} />
+                  <CurrencyRupeeIcon fontSize="small" sx={{ mr: 1 }} />
                   <Typography variant="body1" color="text.secondary">
-                    ${event.price}
+                    Rs{event.price}
                   </Typography>
                 </Box>
               </Box>
@@ -165,14 +186,14 @@ function EventDetails() {
                 }}
               >
                 <Typography variant="h6" gutterBottom>
-                  ${event.price}
+                  Rs {event.price}
                 </Typography>
                 <Button
                   variant="contained"
                   color="secondary"
                   size="large"
                   fullWidth
-                  onClick={handleBooking}
+                  onClick={() => setIsModalOpen(true)}
                   sx={{ mt: 2 }}
                 >
                   Book Now
@@ -190,6 +211,27 @@ function EventDetails() {
           </Box>
         </CardContent>
       </Paper>
+
+      {/* Payment Modal */}
+      <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)}>
+        <DialogTitle>Enter Payment Amount</DialogTitle>
+        <DialogContent>
+          <TextField
+            type="number"
+            label="Amount"
+            fullWidth
+            variant="outlined"
+            value={enteredAmount}
+            onChange={(e) => setEnteredAmount(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setIsModalOpen(false)}>Cancel</Button>
+          <Button onClick={handlePayment} color="primary">
+            Pay
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }

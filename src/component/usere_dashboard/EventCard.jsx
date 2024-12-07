@@ -9,7 +9,8 @@ import {
   Button,
   Box,
 } from "@mui/material";
-import { CalendarToday, LocationOn, AttachMoney } from "@mui/icons-material";
+import { CalendarToday, LocationOn } from "@mui/icons-material";
+import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
 import { format } from "date-fns";
 
 function EventCard({ event }) {
@@ -25,7 +26,6 @@ function EventCard({ event }) {
         "&:hover .priceChip": { opacity: 1, visibility: "visible" },
       }}
     >
-      {/* Event Image */}
       <CardMedia
         component="img"
         height="150"
@@ -33,7 +33,6 @@ function EventCard({ event }) {
         alt={event.title}
       />
 
-      {/* Price Chip (Hidden by Default) */}
       <Box
         className="priceChip"
         sx={{
@@ -53,8 +52,8 @@ function EventCard({ event }) {
           transition: "opacity 0.3s ease, visibility 0.3s ease",
         }}
       >
-        <AttachMoney fontSize="small" sx={{ mr: 0.5 }} />
-        {event.price}
+        <CurrencyRupeeIcon fontSize="small" sx={{ mr: 0.5 }} />
+        Rs{event.price}
       </Box>
 
       <CardContent>

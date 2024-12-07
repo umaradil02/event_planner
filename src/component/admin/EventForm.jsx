@@ -26,6 +26,7 @@ function EventForm({ open, onClose, event = null }) {
     price: event?.price || "",
     image: event?.image || "",
   });
+  const [validationErrors, setValidationErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [imageFile, setImageFile] = useState(null);
   const dispatch = useDispatch();
@@ -33,6 +34,7 @@ function EventForm({ open, onClose, event = null }) {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    setValidationErrors((prev) => ({ ...prev, [name]: "" })); // Clear error
   };
 
   const handleImageChange = (e) => {
@@ -44,10 +46,31 @@ function EventForm({ open, onClose, event = null }) {
     }
   };
 
+  const validateForm = () => {
+    const errors = {};
+
+    if (!formData.title.trim()) errors.title = "Title is required";
+    if (!formData.description.trim())
+      errors.description = "Description is required";
+    if (!formData.date) errors.date = "Date is required";
+    if (!formData.location.trim()) errors.location = "Location is required";
+    if (!formData.price || formData.price <= 0)
+      errors.price = "Price must be a positive number";
+    if (!formData.image) errors.image = "Image is required";
+
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
 
+    if (!validateForm()) {
+      toast.error("Please fix the errors in the form");
+      return;
+    }
+
+    setLoading(true);
     try {
       let imageUrl = formData.image;
 
@@ -70,6 +93,16 @@ function EventForm({ open, onClose, event = null }) {
         toast.success("Event created successfully");
       }
 
+      setFormData({
+        title: "",
+        description: "",
+        date: new Date(),
+        location: "",
+        price: "",
+        image: "",
+      });
+      setImageFile(null);
+      setValidationErrors({});
       onClose();
     } catch (error) {
       toast.error(error.message || "Failed to save event");
@@ -104,6 +137,8 @@ function EventForm({ open, onClose, event = null }) {
               name="title"
               value={formData.title}
               onChange={handleChange}
+              error={!!validationErrors.title}
+              helperText={validationErrors.title}
               required
               fullWidth
             />
@@ -113,6 +148,8 @@ function EventForm({ open, onClose, event = null }) {
               name="description"
               value={formData.description}
               onChange={handleChange}
+              error={!!validationErrors.description}
+              helperText={validationErrors.description}
               multiline
               rows={3}
               required
@@ -126,7 +163,13 @@ function EventForm({ open, onClose, event = null }) {
                 setFormData((prev) => ({ ...prev, date: newDate }))
               }
               renderInput={(params) => (
-                <TextField {...params} required fullWidth />
+                <TextField
+                  {...params}
+                  error={!!validationErrors.date}
+                  helperText={validationErrors.date}
+                  required
+                  fullWidth
+                />
               )}
               sx={{ width: "100%" }}
             />
@@ -136,6 +179,8 @@ function EventForm({ open, onClose, event = null }) {
               name="location"
               value={formData.location}
               onChange={handleChange}
+              error={!!validationErrors.location}
+              helperText={validationErrors.location}
               required
               fullWidth
             />
@@ -146,10 +191,12 @@ function EventForm({ open, onClose, event = null }) {
               type="number"
               value={formData.price}
               onChange={handleChange}
+              error={!!validationErrors.price}
+              helperText={validationErrors.price}
               required
               fullWidth
               InputProps={{
-                startAdornment: "$",
+                startAdornment: "Rs",
                 inputProps: { min: 0, step: 0.01 },
               }}
             />
@@ -169,6 +216,9 @@ function EventForm({ open, onClose, event = null }) {
                   accept="image/*"
                 />
               </Button>
+              {validationErrors.image && (
+                <Box color="error.main">{validationErrors.image}</Box>
+              )}
               {formData.image && (
                 <Box
                   sx={{

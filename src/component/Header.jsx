@@ -7,14 +7,16 @@ import {
   Avatar,
   Menu,
   MenuItem,
-  CircularProgress,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
   Button,
+  IconButton,
 } from "@mui/material";
 import EventAvailableSharpIcon from "@mui/icons-material/EventAvailableSharp";
+import Brightness4Icon from "@mui/icons-material/Brightness4";
+import Brightness7Icon from "@mui/icons-material/Brightness7";
 import { useSelector, useDispatch } from "react-redux";
 import { signOut } from "firebase/auth";
 import { auth, db } from "../firebase/configure";
@@ -23,12 +25,15 @@ import { uploadImageToCloudinary } from "../cloudnary/cloudnary";
 import { toast } from "react-hot-toast";
 import { Link } from "react-router-dom";
 import { isAdmin } from "./RouteCheker";
+import { toggleTheme } from "../slices/themslice";
 
 const DEFAULT_PROFILE_PIC = "https://via.placeholder.com/100x100?text=Avatar";
 
 const Header = () => {
-  const { logdinuser, loading } = useSelector((state) => state.auth);
+  const { logdinuser } = useSelector((state) => state.auth);
+  const themeMode = useSelector((state) => state.theme.mode);
   const dispatch = useDispatch();
+
   const [menuAnchorEl, setMenuAnchorEl] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [newProfilePic, setNewProfilePic] = useState(DEFAULT_PROFILE_PIC);
@@ -74,11 +79,6 @@ const Header = () => {
         profilePic: imageUrl,
       });
 
-      dispatch({
-        type: "UPDATE_USER",
-        payload: { profilePic: imageUrl },
-      });
-
       setNewProfilePic(imageUrl);
       toast.success("Profile picture updated successfully!");
     } catch (error) {
@@ -96,12 +96,6 @@ const Header = () => {
   const handleProfileDialogClose = () => {
     setProfileDialogOpen(false);
   };
-
-  // if (loading) {
-  //   return (
-  //     <CircularProgress sx={{ margin: "auto", display: "block", mt: 2 }} />
-  //   );
-  // }
 
   return (
     <AppBar position="static" color="primary">
@@ -124,14 +118,22 @@ const Header = () => {
           Next Event
         </Typography>
         <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+          {isAdmin(logdinuser) && (
+            <Button color="inherit" component={Link} to="/all-bookings">
+              ALL Bookings
+            </Button>
+          )}
           {logdinuser ? (
             !isAdmin(logdinuser) && (
               <>
                 <Button color="inherit" component={Link} to="/dashboard">
-                  My Dashboard
+                  Explore
                 </Button>
                 <Button color="inherit" component={Link} to="/my-bookings">
                   My Booking
+                </Button>
+                <Button color="inherit" component={Link} to="/contact-us">
+                  Contact us
                 </Button>
               </>
             )
@@ -145,6 +147,13 @@ const Header = () => {
               </Button>
             </>
           )}
+          <IconButton
+            color="inherit"
+            onClick={() => dispatch(toggleTheme())}
+            aria-label="toggle theme"
+          >
+            {themeMode === "light" ? <Brightness4Icon /> : <Brightness7Icon />}
+          </IconButton>
           {logdinuser && (
             <Box
               onClick={handleMenuOpen}
@@ -195,9 +204,7 @@ const Header = () => {
               src={newProfilePic || DEFAULT_PROFILE_PIC}
               sx={{ width: 100, height: 100 }}
             />
-            <Typography variant="h6">
-              {logdinuser?.displayName || "User"}
-            </Typography>
+            <Typography variant="h6">{logdinuser?.name}</Typography>
             <Button variant="outlined" component="label" disabled={uploading}>
               {uploading ? "Uploading..." : "Upload New Picture"}
               <input

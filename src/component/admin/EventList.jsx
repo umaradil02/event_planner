@@ -68,7 +68,7 @@ function EventList({ events, onEdit }) {
               </TableCell>
               <TableCell>{format(new Date(event.date), "PPp")}</TableCell>
               <TableCell>{event.location}</TableCell>
-              <TableCell>${event.price}</TableCell>
+              <TableCell>Rs{event.price}</TableCell>
               <TableCell align="right">
                 <IconButton
                   color="primary"

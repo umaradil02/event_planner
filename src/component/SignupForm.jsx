@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { auth, db } from "../firebase/configure";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { setDoc, doc } from "firebase/firestore";
 import { Box, TextField, Button, Typography } from "@mui/material";
 import { motion, AnimatePresence } from "framer-motion";
@@ -48,6 +48,9 @@ const SignupForm = () => {
         formData.email,
         formData.password
       );
+      await updateProfile(userCredential.user, {
+        displayName: formData.name,
+      });
       await setDoc(doc(db, "users", userCredential.user.uid), {
         name: formData.name,
         email: formData.email,
