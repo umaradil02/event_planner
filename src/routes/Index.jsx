@@ -7,7 +7,7 @@ import Layout from "../component/Layout";
 import LoginForm from "../component/LoginForm";
 import SignupForm from "../component/SignupForm";
 import DashBoard from "../component/usere_dashboard/UserDashboard";
-import WelcomePage from "../pages/WelComePage";
+import WelcomePage from "/..../pages/WelComePage";
 import { Logincheker, Routeprotected } from "../component/RouteCheker";
 import Admin from "../component/admin/admin";
 import EventDetails from "../component/usere_dashboard/EventDetails";
