@@ -118,6 +118,7 @@ function EventDetails() {
         eventId: event.id,
         userId: logdinuser.uid,
         UserName: logdinuser?.name,
+        UserEmail: logdinuser?.email,
         eventTitle: event.title,
         bookingDate: new Date().toISOString(),
         eventDate: event.date,

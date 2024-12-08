@@ -1,7 +1,7 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { CircularProgress } from "@mui/material";
 import { useSelector } from "react-redux";
-const isAdmin = (user) => user?.uid === "lnfg9c7PTjaSOxqlCbU0sW3pGkb2";
+const isAdmin = (user) => user?.uid === "mjxPQxj9DRePTQxVx8d98L8quUw2";
 const Logincheker = () => {
   const { loading, logdinuser } = useSelector((state) => state.auth);
 
@@ -44,15 +44,23 @@ const Routeprotected = () => {
 
   if (logdinuser) {
     const userAdmin = isAdmin(logdinuser);
-    if (userAdmin && location.pathname !== "/admin") {
-      return <Navigate to="/admin" />;
-    }
-    if (!userAdmin && location.pathname === "/admin") {
+    if (userAdmin) {
+      if (
+        location.pathname === "/admin" ||
+        location.pathname === "/all-bookings"
+      ) {
+        return <Outlet />;
+      }
+      if (location.pathname === "/dashboard") {
+        return <Navigate to="/admin" />;
+      }
+    } else if (
+      location.pathname === "/admin" ||
+      location.pathname === "/all-bookings"
+    ) {
       return <Navigate to="/dashboard" />;
     }
-    if (userAdmin && location.pathname === "/all-bookings") {
-      return <Navigate to="/all-bookings" />;
-    }
+
     return <Outlet />;
   }
   return <Navigate to="/" />;

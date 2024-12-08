@@ -6,7 +6,7 @@ import { format, parseISO, isValid } from "date-fns";
 import { Typography, Paper, Box, Button } from "@mui/material";
 import { jsPDF } from "jspdf";
 import QRCode from "qrcode";
-import { motion } from "framer-motion"; // Import Framer Motion
+import { motion } from "framer-motion";
 
 const BookedEvents = () => {
   const [bookings, setBookings] = useState([]);

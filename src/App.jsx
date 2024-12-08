@@ -14,20 +14,23 @@ function App() {
   const themeMode = useSelector((state) => state.theme.mode);
 
   useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
+    const unsub = onAuthStateChanged(auth, async (user) => {
       dispatch(inital());
       if (user) {
+        await user.reload();
+        const { displayName, email, uid } = user;
         dispatch(
           login({
-            email: user.email,
-            uid: user.uid,
-            name: user.displayName,
+            email,
+            uid,
+            name: displayName || "Guest",
           })
         );
       } else {
         dispatch(logout());
       }
     });
+    return () => unsub();
   }, [dispatch]);
 
   const theme = useMemo(

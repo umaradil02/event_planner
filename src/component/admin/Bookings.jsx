@@ -1,19 +1,23 @@
 import React, { useEffect, useState } from "react";
 import { collection, query, onSnapshot, where } from "firebase/firestore";
-import { db } from "../../firebase/configure"; // Import Firestore
+import { db } from "../../firebase/configure";
 import { Typography, Box, Paper, Button } from "@mui/material";
 
 const Bookings = () => {
   const [bookings, setBookings] = useState([]);
 
   useEffect(() => {
-    // Set up a Firestore listener to fetch all bookings in real-time
     const q = query(collection(db, "bookings"));
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      setBookings(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
+      const bookingdata = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      console.log(bookingdata);
+
+      setBookings(bookingdata);
     });
 
-    // Cleanup the listener when the component is unmounted
     return () => unsubscribe();
   }, []);
 
@@ -28,13 +32,15 @@ const Bookings = () => {
       ) : (
         bookings.map((booking) => (
           <Paper key={booking.id} sx={{ padding: 2, marginBottom: 2 }}>
-            <Typography variant="h6">{booking.eventTitle}</Typography>
+            <Typography variant="h6">{booking?.eventTitle}</Typography>
             <Typography variant="body1">
-              Date:{" "}
-              {new Date(booking.eventDate.seconds * 1000).toLocaleString()}
+              Date: {new Date(booking?.eventDate).toLocaleString()}
+            </Typography>
+            <Typography variant="body1">
+              BookingDate: {new Date(booking?.bookingDate).toLocaleString()}
             </Typography>
             <Typography variant="body2">
-              Booked by: {booking.userName} ({booking.userEmail})
+              Booked by: {booking.UserName} ({booking.userEmail})
             </Typography>
             <Typography variant="body2">Status: {booking.status}</Typography>
             <Button variant="contained" color="primary" sx={{ marginTop: 2 }}>

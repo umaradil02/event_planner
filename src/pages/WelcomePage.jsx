@@ -24,14 +24,12 @@ const WelcomePage = () => {
     }
   }, [dispatch, status]);
 
-  // Sort events by date (latest first) and take the top 3
   const latestEvents = [...events]
     .sort((a, b) => new Date(b.date) - new Date(a.date))
     .slice(0, 3);
 
   return (
     <>
-      {/* Hero Section */}
       <Box
         sx={{
           height: "75vh",
@@ -44,7 +42,6 @@ const WelcomePage = () => {
           color: "white",
         }}
       >
-        {/* Left Section: Image */}
         <Box
           sx={{
             flex: 1,
@@ -65,7 +62,6 @@ const WelcomePage = () => {
           />
         </Box>
 
-        {/* Right Section: Text and Button */}
         <Box
           sx={{
             flex: 1,
@@ -119,7 +115,6 @@ const WelcomePage = () => {
         </Box>
       </Box>
 
-      {/* Events Section */}
       <Box sx={{ padding: "40px", backgroundColor: "#1a1a1a", color: "white" }}>
         <Typography
           variant="h4"

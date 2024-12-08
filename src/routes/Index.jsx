@@ -13,7 +13,7 @@ import Admin from "../component/admin/admin";
 import EventDetails from "../component/usere_dashboard/EventDetails";
 import BookedEvents from "../component/usere_dashboard/BookedEvents";
 import ContactForm from "../component/ContactForm";
-import Bookings from "../component/admin/Bookings";
+import Bookings from "../component/admin/Bookingss";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -25,8 +25,8 @@ export const router = createBrowserRouter(
           <Route path="/my-bookings" element={<BookedEvents />} />
           <Route path="/contact-us" element={<ContactForm />} />
           <Route path="/all-bookings" element={<Bookings />} />
+          <Route path="/admin" element={<Admin />} />
         </Route>
-        <Route path="/admin" element={<Admin />} />
         <Route element={<Logincheker />}>
           <Route path="/" element={<WelcomePage />} />
 

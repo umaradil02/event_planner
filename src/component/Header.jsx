@@ -204,7 +204,7 @@ const Header = () => {
               src={newProfilePic || DEFAULT_PROFILE_PIC}
               sx={{ width: 100, height: 100 }}
             />
-            <Typography variant="h6">{logdinuser?.name}</Typography>
+            <Typography variant="h6">{logdinuser?.name || "Guest"}</Typography>
             <Button variant="outlined" component="label" disabled={uploading}>
               {uploading ? "Uploading..." : "Upload New Picture"}
               <input

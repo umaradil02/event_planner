@@ -51,6 +51,7 @@ const SignupForm = () => {
       await updateProfile(userCredential.user, {
         displayName: formData.name,
       });
+      await userCredential.user.reload();
       await setDoc(doc(db, "users", userCredential.user.uid), {
         name: formData.name,
         email: formData.email,

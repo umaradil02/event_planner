@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchEvents } from "../../slices/eventslice";
 import EventCard from "./EventCard";
@@ -9,17 +9,29 @@ import {
   Typography,
   CircularProgress,
 } from "@mui/material";
+import { SearchBar } from "./SearchBar";
+import { EmptyState } from "./EmptyState";
 
 function UserDashboard() {
   const dispatch = useDispatch();
   const events = useSelector((state) => state.events.events);
   const status = useSelector((state) => state.events.status);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     if (status === "idle") {
       dispatch(fetchEvents());
     }
   }, [status, dispatch]);
+
+  const filterevent = events.filter((event) => {
+    const matchesSearch =
+      event.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      event.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      event.location?.toLowerCase().includes(searchTerm.toLowerCase());
+
+    return matchesSearch;
+  });
 
   return (
     <Box
@@ -43,7 +55,12 @@ function UserDashboard() {
             Discover and book amazing events in your area
           </Typography>
         </Box>
-
+        <Box sx={{ mb: 4 }}>
+          <SearchBar
+            searchTerm={searchTerm}
+            onSearchChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </Box>
         {status === "loading" ? (
           <Box
             display="flex"
@@ -53,24 +70,15 @@ function UserDashboard() {
           >
             <CircularProgress color="primary" size={60} />
           </Box>
+        ) : filterevent.length === 0 ? (
+          <EmptyState />
         ) : (
-          // Grid Layout for Event Cards
-          <Grid container spacing={4}>
-            {events.length > 0 ? (
-              events.map((event) => (
-                <Grid item key={event.id} xs={12} sm={6} md={4}>
-                  <EventCard event={event} />
-                </Grid>
-              ))
-            ) : (
-              <Grid item xs={12}>
-                <Box textAlign="center" mt={4}>
-                  <Typography variant="h6" color="text.secondary">
-                    No events available at the moment. Please check back later.
-                  </Typography>
-                </Box>
+          <Grid container spacing={3}>
+            {filterevent.map((event) => (
+              <Grid item xs={12} sm={6} md={4} key={event.id}>
+                <EventCard event={event} />
               </Grid>
-            )}
+            ))}
           </Grid>
         )}
       </Container>
